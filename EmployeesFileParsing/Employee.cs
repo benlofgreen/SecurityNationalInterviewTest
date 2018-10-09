@@ -52,10 +52,22 @@ namespace EmployeesFileParsing
         {
             double grossSalary = CalculateBiWeeklyGrossPay();
             double realSalary = grossSalary;
-            realSalary = realSalary - (grossSalary * FederalTaxRate);
-            realSalary = realSalary - (grossSalary * StateTaxRates[State]);
+            realSalary = realSalary - CalculateFederalTax();
+            realSalary = realSalary - CalculateStateTax();
 
-            return realSalary;
+            return Math.Round(realSalary, 2, MidpointRounding.AwayFromZero);
+        }
+
+        public double CalculateFederalTax()
+        {
+            double grossSalary = CalculateBiWeeklyGrossPay();
+            return Math.Round((grossSalary * FederalTaxRate), 2, MidpointRounding.AwayFromZero);
+        }
+
+        public double CalculateStateTax()
+        {
+            double grossSalary = CalculateBiWeeklyGrossPay();
+            return Math.Round((grossSalary * StateTaxRates[State]), 2, MidpointRounding.AwayFromZero);
         }
 
         public double CalculateBiWeeklyGrossPay()
@@ -95,7 +107,7 @@ namespace EmployeesFileParsing
                 }
             }
 
-            return grossSalary;
+            return Math.Round(grossSalary, 2, MidpointRounding.AwayFromZero);
         }
     }
 
