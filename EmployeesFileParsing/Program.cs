@@ -7,13 +7,23 @@ namespace EmployeesFileParsing
 {
     public class Program
     {
-        private string EmployeeFileLocation = "Employees/Employees.txt";
+        private static string EmployeeFileLocation = "Employees/Employees.txt";
         Dictionary<string, Employee> Employees;
+
         static void Main(string[] args)
         {
             Program program = new Program();
             Console.WriteLine("Beginning Operation");
+
+            DateTime startTime = DateTime.Now;
             program.Employees = program.ParseEmployees().ToDictionary(x => x.ID);
+
+            DateTime endTime = DateTime.Now;
+            TimeSpan diff = endTime - startTime;
+            double milliseconds = diff.TotalMilliseconds;
+
+            Console.WriteLine("All Employees read, process took " + milliseconds + " Milliseconds");
+
             List<Employee> employees = program.Employees.Select(x => x.Value).ToList();
 
             CalculateAllPaychecks(employees);
@@ -31,7 +41,7 @@ namespace EmployeesFileParsing
             DateTime startTime = DateTime.Now;
 
             Employees = Employees.OrderByDescending(x => x.CalculateBiWeeklyGrossPay()).ToList();
-            List<string> EmployeesOutput = new List<string>();
+            List<string> employeesOutput = new List<string>();
 
             Employees = Employees.OrderByDescending(x => x.CalculateBiWeeklyGrossPay()).ToList();
 
@@ -40,11 +50,11 @@ namespace EmployeesFileParsing
 
             foreach (Employee e in Employees)
             {
-                EmployeesOutput.Add(e.ID + "," + e.FirstName + "," + e.LastName + "," + e.CalculateBiWeeklyGrossPay()
-                    + "," + e.CalculateFederalTax() + "," + e.CalculateStateTax() + "," + e.CalculateBiWeeklyNetPay());
+                employeesOutput.Add(e.ID + ", " + e.FirstName + " " + e.LastName + ", Gross Pay:" + e.CalculateBiWeeklyGrossPay()
+                    + ", Federal Tax: " + e.CalculateFederalTax() + ", State Tax: " + e.CalculateStateTax() + ", Net Pay: " + e.CalculateBiWeeklyNetPay());
             }
 
-            System.IO.File.WriteAllLines("Employees/AllEmployeesOutput.txt", EmployeesOutput);
+            System.IO.File.WriteAllLines("Employees/AllEmployeesOutput.txt", employeesOutput);
 
             DateTime endTime = DateTime.Now;
             TimeSpan diff = endTime - startTime;
@@ -56,19 +66,19 @@ namespace EmployeesFileParsing
         public static void CalculateTopFifteenPercent(List<Employee> Employees)
         {
             DateTime startTime = DateTime.Now;
-            List<Employee> TopFifteenPercent = Employees.Take((15 * Employees.Count) / 100)
+            List<Employee> topFifteenPercent = Employees.Take((15 * Employees.Count) / 100)
                 .OrderByDescending(x => CalculateYearsWorked(x)).ThenBy(x => x.LastName).ThenBy(x => x.FirstName)
                 .ToList();
 
-            List<string> TopFifteenPercentEmployeesOutput = new List<string>();
+            List<string> topFifteenPercentEmployeesOutput = new List<string>();
 
-            foreach (Employee e in TopFifteenPercent)
+            foreach (Employee e in topFifteenPercent)
             {
 
                 double grossPay = e.CalculateBiWeeklyGrossPay();
-                TopFifteenPercentEmployeesOutput.Add(e.FirstName + " " + e.LastName + ", Years Worked: " + CalculateYearsWorked(e) + ": Gross Pay: " + grossPay);
+                topFifteenPercentEmployeesOutput.Add(e.FirstName + " " + e.LastName + ", Years Worked: " + CalculateYearsWorked(e) + ": Gross Pay: " + grossPay);
             }
-            System.IO.File.WriteAllLines("Employees/Top15PercentOutput.txt", TopFifteenPercentEmployeesOutput);
+            System.IO.File.WriteAllLines("Employees/Top15PercentOutput.txt", topFifteenPercentEmployeesOutput);
 
             DateTime endTime = DateTime.Now;
             TimeSpan diff = endTime - startTime;
@@ -81,7 +91,7 @@ namespace EmployeesFileParsing
         {
             DateTime startTime = DateTime.Now;
 
-            List<string> StatesOutput = new List<string>();
+            List<string> statesOutput = new List<string>();
 
             foreach (KeyValuePair<string, double> state in Employee.StateTaxRates)
             {
@@ -97,10 +107,10 @@ namespace EmployeesFileParsing
                     stateStats.MedianTimeWorked = stateEmployees.OrderBy(x => x.HoursWorked).ToArray()[stateEmployees.Count / 2].CalculateBiWeeklyNetPay();
                     stateStats.TotalStateTaxesPaid = Math.Round((stateEmployees.Sum(x => x.CalculateStateTax())), 2, MidpointRounding.AwayFromZero);
                 }
-                StatesOutput.Add(stateStats.State + "," + stateStats.MedianTimeWorked + "," + stateStats.MedianNetPay + "," + stateStats.TotalStateTaxesPaid);
+                statesOutput.Add(stateStats.State + ": Median Time Worked:" + stateStats.MedianTimeWorked + ", Median Net Pay:" + stateStats.MedianNetPay + ", Total State Taxes:" + stateStats.TotalStateTaxesPaid);
             }
 
-            System.IO.File.WriteAllLines("Employees/StatesOutput.txt", StatesOutput);
+            System.IO.File.WriteAllLines("Employees/StatesOutput.txt", statesOutput);
 
             DateTime endTime = DateTime.Now;
             TimeSpan diff = endTime - startTime;
