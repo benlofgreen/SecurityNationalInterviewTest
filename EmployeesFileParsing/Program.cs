@@ -152,7 +152,6 @@ namespace EmployeesFileParsing
                 }
                 catch (Exception e)
                 {
-                    // Need better handler
                     Console.WriteLine(e.StackTrace);
                 }
             }
