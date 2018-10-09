@@ -6,7 +6,7 @@ namespace EmployeesFileParsing
 {
     public class Employee
     {
-        public long ID { get; set; }
+        public string ID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public PayType PayType { get; set; }
@@ -17,15 +17,15 @@ namespace EmployeesFileParsing
 
         public static double FederalTaxRate = 0.15;
         public static Dictionary<string, double> StateTaxRates = new Dictionary<string, double>() {
-            { "UT", 5 }, { "WY", 5 }, { "NV", 5 },
-            { "CO", 6.5 }, { "ID", 6.5 }, { "AZ", 6.5 }, { "OR", 6.5 },
-            { "WA", 7 }, { "NM", 7 }, { "TX", 7 }
+            { "UT", 0.05 }, { "WY", 0.05 }, { "NV", 0.05 },
+            { "CO", 0.065 }, { "ID", 0.065 }, { "AZ", 0.065 }, { "OR", 0.065 },
+            { "WA", 0.07 }, { "NM", 0.07 }, { "TX", 0.07 }
         };
 
         public Employee(string EmployeeInputLine)
         {
             string[] split = EmployeeInputLine.Split(',');
-            ID = long.Parse(split[0]);
+            ID = split[0];
             FirstName = split[1];
             LastName = split[2];
             if (split[3].Equals("S"))
@@ -50,10 +50,10 @@ namespace EmployeesFileParsing
 
         public double CalculateBiWeeklyNetPay()
         {
-            double realSalary = CalculateBiWeeklyGrossPay();
- 
-            realSalary = realSalary - (Salary * FederalTaxRate);
-            realSalary = realSalary - (Salary * StateTaxRates[State]);
+            double grossSalary = CalculateBiWeeklyGrossPay();
+            double realSalary = grossSalary;
+            realSalary = realSalary - (grossSalary * FederalTaxRate);
+            realSalary = realSalary - (grossSalary * StateTaxRates[State]);
 
             return realSalary;
         }

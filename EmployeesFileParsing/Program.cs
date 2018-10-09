@@ -6,12 +6,18 @@ namespace EmployeesFileParsing
 {
     public class Program
     {
-        private string EmployeeFileLocation = "";
-        public List<Employee> employees;
+        private string EmployeeFileLocation = "Employees/Employees.txt";
+        public List<Employee> Employees = new List<Employee>();
 
         static void Main(string[] args)
         {
             Program program = new Program();
+            program.ParseEmployees();
+            foreach (Employee e in program.Employees)
+            {
+                Console.WriteLine(e.CalculateBiWeeklyNetPay());
+            }
+            Console.ReadLine();
         }
 
         public void ParseEmployees()
@@ -24,11 +30,11 @@ namespace EmployeesFileParsing
                     string line = file.ReadLine();
 
                     Employee e = new Employee(line);
-                    employees.Add(e);
+                    Employees.Add(e);
                 }
                 catch (Exception e)
                 {
-
+                    Console.WriteLine(e.StackTrace);
                 }
             }
 
