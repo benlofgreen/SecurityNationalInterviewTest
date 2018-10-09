@@ -32,6 +32,8 @@ namespace EmployeesFileParsing
 
             CalculateStateStatistics(employees);
 
+            program.TestRandomEmployeeLookupSpeed();
+
             Console.WriteLine("Operations Complete");
             Console.ReadLine();
         }
@@ -117,6 +119,22 @@ namespace EmployeesFileParsing
             double milliseconds = diff.TotalMilliseconds;
 
             Console.WriteLine("All State statistics calculated, process took " + milliseconds + " Milliseconds");
+        }
+
+        public void TestRandomEmployeeLookupSpeed()
+        {
+
+            Random random = new Random((int)DateTime.Now.Ticks % int.MaxValue);
+            int randomIndex = random.Next(Employees.Count);
+            string id = Employees.ElementAt(randomIndex).Value.ID;
+
+            DateTime startTime = DateTime.Now;
+            FindEmployee(id);
+            DateTime endTime = DateTime.Now;
+            TimeSpan diff = endTime - startTime;
+            double milliseconds = diff.TotalMilliseconds;
+
+            Console.WriteLine("Found random Employee by ID lookup, process took " + milliseconds + " Milliseconds");
         }
 
         public List<Employee> ParseEmployees()
